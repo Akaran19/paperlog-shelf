@@ -1,5 +1,3 @@
-'use client';
-
 import { Shelf } from '@/types';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Eye, CheckCircle2 } from 'lucide-react';

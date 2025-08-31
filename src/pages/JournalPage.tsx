@@ -1,14 +1,10 @@
-'use client';
-
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
-import { notFound } from 'next/navigation';
+import { useParams, Link } from 'react-router-dom';
 import { Journal, Paper } from '@/types';
 import { dataClient } from '@/lib/dataClient';
 import { PaperCard } from '@/components/PaperCard';
 import { BookOpen, ExternalLink, Hash } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import Link from 'next/link';
 
 export default function JournalPage() {
   const params = useParams();
@@ -17,6 +13,7 @@ export default function JournalPage() {
   const [journal, setJournal] = useState<Journal | null>(null);
   const [papers, setPapers] = useState<Paper[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     loadJournalData();
@@ -30,7 +27,7 @@ export default function JournalPage() {
       ]);
 
       if (!journalData) {
-        notFound();
+        setNotFound(true);
         return;
       }
 
@@ -38,7 +35,7 @@ export default function JournalPage() {
       setPapers(papersData);
     } catch (error) {
       console.error('Error loading journal:', error);
-      notFound();
+      setNotFound(true);
     } finally {
       setIsLoading(false);
     }
@@ -67,8 +64,22 @@ export default function JournalPage() {
     );
   }
 
-  if (!journal) {
-    notFound();
+  if (notFound || !journal) {
+    return (
+      <div className="page-wrapper">
+        <main className="page-container">
+          <div className="text-center py-12">
+            <h1 className="text-4xl font-bold mb-4">Journal Not Found</h1>
+            <p className="text-muted-foreground mb-8">
+              The journal you're looking for doesn't exist in our database.
+            </p>
+            <Link to="/" className="text-primary hover:underline">
+              ← Back to search
+            </Link>
+          </div>
+        </main>
+      </div>
+    );
   }
 
   return (
@@ -77,7 +88,7 @@ export default function JournalPage() {
         {/* Navigation */}
         <div className="mb-6">
           <Link 
-            href="/"
+            to="/"
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
           >
             ← Back to search
@@ -104,7 +115,7 @@ export default function JournalPage() {
                   )}
                   {journal.externalId && (
                     <a
-                      href={`#`} // Would link to journal homepage in real app
+                      href="#" // Would link to journal homepage in real app
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"

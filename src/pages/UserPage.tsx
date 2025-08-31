@@ -1,15 +1,11 @@
-'use client';
-
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
-import { notFound } from 'next/navigation';
+import { useParams, Link } from 'react-router-dom';
 import { User, UserPaper } from '@/types';
 import { dataClient } from '@/lib/dataClient';
 import { UserLibraryTabs } from '@/components/UserLibraryTabs';
 import { User as UserIcon, Calendar, BookOpen } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import Link from 'next/link';
 
 export default function UserPage() {
   const params = useParams();
@@ -18,6 +14,7 @@ export default function UserPage() {
   const [user, setUser] = useState<User | null>(null);
   const [userPapers, setUserPapers] = useState<UserPaper[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     loadUserData();
@@ -31,7 +28,7 @@ export default function UserPage() {
       ]);
 
       if (!userData) {
-        notFound();
+        setNotFound(true);
         return;
       }
 
@@ -39,7 +36,7 @@ export default function UserPage() {
       setUserPapers(papersData);
     } catch (error) {
       console.error('Error loading user:', error);
-      notFound();
+      setNotFound(true);
     } finally {
       setIsLoading(false);
     }
@@ -76,8 +73,22 @@ export default function UserPage() {
     );
   }
 
-  if (!user) {
-    notFound();
+  if (notFound || !user) {
+    return (
+      <div className="page-wrapper">
+        <main className="page-container">
+          <div className="text-center py-12">
+            <h1 className="text-4xl font-bold mb-4">User Not Found</h1>
+            <p className="text-muted-foreground mb-8">
+              The user you're looking for doesn't exist.
+            </p>
+            <Link to="/" className="text-primary hover:underline">
+              ← Back to search
+            </Link>
+          </div>
+        </main>
+      </div>
+    );
   }
 
   return (
@@ -86,7 +97,7 @@ export default function UserPage() {
         {/* Navigation */}
         <div className="mb-6">
           <Link 
-            href="/"
+            to="/"
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
           >
             ← Back to search

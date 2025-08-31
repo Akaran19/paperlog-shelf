@@ -1,6 +1,4 @@
-'use client';
-
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import { Paper, Author, Journal } from '@/types';
 import { paperUrl } from '@/lib/routing';
 import { formatDOIUrl } from '@/lib/doi';
@@ -20,7 +18,7 @@ export function PaperCard({ paper, authors = [], journal, showAbstract = false }
       <div className="space-y-3">
         <div className="flex items-start justify-between gap-4">
           <Link 
-            href={paperUrl(paper)}
+            to={paperUrl(paper)}
             className="flex-1 group"
           >
             <h3 className="text-lg md:text-xl font-semibold leading-tight group-hover:text-primary transition-colors">
@@ -74,7 +72,7 @@ export function PaperCard({ paper, authors = [], journal, showAbstract = false }
 
       <div className="pt-2 border-t">
         <Link 
-          href={paperUrl(paper)}
+          to={paperUrl(paper)}
           className="text-sm font-medium text-primary hover:underline"
         >
           View details →

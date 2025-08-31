@@ -1,8 +1,5 @@
-'use client';
-
 import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { notFound, redirect } from 'next/navigation';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Paper, Author, Journal, PaperAggregates } from '@/types';
 import { dataClient } from '@/lib/dataClient';
 import { extractPaperId, shouldRedirectForSlug, paperUrl } from '@/lib/routing';
@@ -11,12 +8,10 @@ import { PaperActions } from '@/components/PaperActions';
 import { AggregateStats } from '@/components/AggregateStats';
 import { Calendar, Users, ExternalLink, BookOpen } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 
 export default function PaperPage() {
   const params = useParams();
-  const router = useRouter();
+  const navigate = useNavigate();
   const paperIdAndSlug = params.paperIdAndSlug as string;
   
   const [paper, setPaper] = useState<Paper | null>(null);
@@ -24,6 +19,7 @@ export default function PaperPage() {
   const [journal, setJournal] = useState<Journal | null>(null);
   const [aggregates, setAggregates] = useState<PaperAggregates | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     loadPaperData();
@@ -35,13 +31,13 @@ export default function PaperPage() {
       const paperData = await dataClient.getPaperById(paperId);
       
       if (!paperData) {
-        notFound();
+        setNotFound(true);
         return;
       }
 
       // Check if slug matches and redirect if needed
       if (shouldRedirectForSlug(paperIdAndSlug, paperData.title)) {
-        redirect(paperUrl(paperData));
+        navigate(paperUrl(paperData), { replace: true });
         return;
       }
 
@@ -58,7 +54,7 @@ export default function PaperPage() {
       setAggregates(aggregatesData);
     } catch (error) {
       console.error('Error loading paper:', error);
-      notFound();
+      setNotFound(true);
     } finally {
       setIsLoading(false);
     }
@@ -96,8 +92,22 @@ export default function PaperPage() {
     );
   }
 
-  if (!paper) {
-    notFound();
+  if (notFound || !paper) {
+    return (
+      <div className="page-wrapper">
+        <main className="page-container">
+          <div className="text-center py-12">
+            <h1 className="text-4xl font-bold mb-4">Paper Not Found</h1>
+            <p className="text-muted-foreground mb-8">
+              The paper you're looking for doesn't exist in our database.
+            </p>
+            <Link to="/" className="text-primary hover:underline">
+              ← Back to search
+            </Link>
+          </div>
+        </main>
+      </div>
+    );
   }
 
   return (
@@ -106,7 +116,7 @@ export default function PaperPage() {
         {/* Navigation */}
         <div className="mb-6">
           <Link 
-            href="/"
+            to="/"
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
           >
             ← Back to search
@@ -130,7 +140,7 @@ export default function PaperPage() {
                       {authors.map((author, index) => (
                         <span key={author.id}>
                           <Link 
-                            href={`/author/${author.id}`}
+                            to={`/author/${author.id}`}
                             className="hover:text-primary transition-colors"
                           >
                             {author.name}
@@ -152,7 +162,7 @@ export default function PaperPage() {
 
               <div className="flex flex-wrap items-center gap-4">
                 {journal && (
-                  <Link href={`/journal/${journal.id}`}>
+                  <Link to={`/journal/${journal.id}`}>
                     <Badge variant="secondary" className="hover:bg-primary/10 transition-colors">
                       {journal.name}
                     </Badge>
@@ -189,8 +199,6 @@ export default function PaperPage() {
                 </p>
               </div>
             )}
-
-            {/* Additional sections could go here - citations, related papers, etc. */}
           </div>
 
           {/* Sidebar Actions */}

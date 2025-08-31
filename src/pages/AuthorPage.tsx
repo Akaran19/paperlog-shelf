@@ -1,14 +1,10 @@
-'use client';
-
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
-import { notFound } from 'next/navigation';
+import { useParams, Link } from 'react-router-dom';
 import { Author, Paper } from '@/types';
 import { dataClient } from '@/lib/dataClient';
 import { PaperCard } from '@/components/PaperCard';
 import { User, BookOpen, ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import Link from 'next/link';
 
 export default function AuthorPage() {
   const params = useParams();
@@ -17,6 +13,7 @@ export default function AuthorPage() {
   const [author, setAuthor] = useState<Author | null>(null);
   const [papers, setPapers] = useState<Paper[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     loadAuthorData();
@@ -30,7 +27,7 @@ export default function AuthorPage() {
       ]);
 
       if (!authorData) {
-        notFound();
+        setNotFound(true);
         return;
       }
 
@@ -38,7 +35,7 @@ export default function AuthorPage() {
       setPapers(papersData);
     } catch (error) {
       console.error('Error loading author:', error);
-      notFound();
+      setNotFound(true);
     } finally {
       setIsLoading(false);
     }
@@ -67,8 +64,22 @@ export default function AuthorPage() {
     );
   }
 
-  if (!author) {
-    notFound();
+  if (notFound || !author) {
+    return (
+      <div className="page-wrapper">
+        <main className="page-container">
+          <div className="text-center py-12">
+            <h1 className="text-4xl font-bold mb-4">Author Not Found</h1>
+            <p className="text-muted-foreground mb-8">
+              The author you're looking for doesn't exist in our database.
+            </p>
+            <Link to="/" className="text-primary hover:underline">
+              ← Back to search
+            </Link>
+          </div>
+        </main>
+      </div>
+    );
   }
 
   return (
@@ -77,7 +88,7 @@ export default function AuthorPage() {
         {/* Navigation */}
         <div className="mb-6">
           <Link 
-            href="/"
+            to="/"
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
           >
             ← Back to search

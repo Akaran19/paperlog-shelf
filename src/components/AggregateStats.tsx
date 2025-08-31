@@ -1,5 +1,3 @@
-'use client';
-
 import { PaperAggregates } from '@/types';
 import { RatingStars } from './RatingStars';
 import { Users, Star } from 'lucide-react';

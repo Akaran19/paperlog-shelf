@@ -1,7 +1,5 @@
-'use client';
-
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router-dom';
 import { Search, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -19,7 +17,7 @@ export function SearchBar({
   autoFocus = false 
 }: SearchBarProps) {
   const [query, setQuery] = useState('');
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,7 +28,7 @@ export function SearchBar({
     // If it looks like a DOI, route to DOI resolver
     if (isValidDOI(trimmedQuery)) {
       const encodedDOI = encodeDOIForUrl(trimmedQuery);
-      router.push(`/paper/doi/${encodedDOI}`);
+      navigate(`/paper/doi/${encodedDOI}`);
     } else {
       // Otherwise, handle as keyword search
       onSearch?.(trimmedQuery);

@@ -1,8 +1,8 @@
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import { GraduationCap, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-export default function NotFound() {
+export default function NotFoundPage() {
   return (
     <div className="page-wrapper">
       <main className="page-container">
@@ -24,13 +24,13 @@ export default function NotFound() {
           
           <div className="flex flex-col sm:flex-row gap-4">
             <Button asChild size="lg">
-              <Link href="/">
+              <Link to="/">
                 <Home className="w-4 h-4 mr-2" />
                 Return Home
               </Link>
             </Button>
             <Button variant="outline" size="lg" asChild>
-              <Link href="/signin">
+              <Link to="/signin">
                 Sign In
               </Link>
             </Button>

@@ -1,7 +1,5 @@
-'use client';
-
 import { useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useNavigate } from 'react-router-dom';
 import { decodeDOIFromUrl } from '@/lib/doi';
 import { paperUrl } from '@/lib/routing';
 import { dataClient } from '@/lib/dataClient';
@@ -9,7 +7,7 @@ import { Loader2 } from 'lucide-react';
 
 export default function DOIResolverPage() {
   const params = useParams();
-  const router = useRouter();
+  const navigate = useNavigate();
   const encodedDOI = params.encoded as string;
 
   useEffect(() => {
@@ -30,14 +28,14 @@ export default function DOIResolverPage() {
       
       if (paper) {
         // Redirect to canonical paper URL
-        router.replace(paperUrl(paper));
+        navigate(paperUrl(paper), { replace: true });
       } else {
         // Paper not found, redirect to home with error
-        router.replace(`/?error=paper-not-found&doi=${encodeURIComponent(doi)}`);
+        navigate(`/?error=paper-not-found&doi=${encodeURIComponent(doi)}`, { replace: true });
       }
     } catch (error) {
       console.error('Error resolving DOI:', error);
-      router.replace('/?error=invalid-doi');
+      navigate('/?error=invalid-doi', { replace: true });
     }
   };
 

@@ -1,11 +1,9 @@
-'use client';
-
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { GraduationCap, Mail, Github } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 
 export default function SignInPage() {
   return (
@@ -85,7 +83,7 @@ export default function SignInPage() {
           <div className="text-center text-sm text-muted-foreground">
             <p>
               Don't have an account?{' '}
-              <Link href="#" className="text-primary hover:underline">
+              <Link to="#" className="text-primary hover:underline">
                 Sign up for free
               </Link>
             </p>
@@ -93,7 +91,7 @@ export default function SignInPage() {
 
           <div className="text-center">
             <Link 
-              href="/"
+              to="/"
               className="text-sm text-muted-foreground hover:text-primary transition-colors"
             >
               ← Back to home

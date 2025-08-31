@@ -1,8 +1,5 @@
 import { createRoot } from 'react-dom/client'
-import './globals.css'
+import App from './App.tsx'
+import './index.css'
 
-const App = ({ children }: { children: React.ReactNode }) => {
-  return children;
-};
-
-export default App;
+createRoot(document.getElementById("root")!).render(<App />);

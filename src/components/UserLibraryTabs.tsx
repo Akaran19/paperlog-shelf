@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useEffect } from 'react';
 import { Shelf, UserPaper, Paper } from '@/types';
 import { dataClient } from '@/lib/dataClient';
