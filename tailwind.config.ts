@@ -52,16 +52,21 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				sidebar: {
-					DEFAULT: 'hsl(var(--sidebar-background))',
-					foreground: 'hsl(var(--sidebar-foreground))',
-					primary: 'hsl(var(--sidebar-primary))',
-					'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-					accent: 'hsl(var(--sidebar-accent))',
-					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-					border: 'hsl(var(--sidebar-border))',
-					ring: 'hsl(var(--sidebar-ring))'
+				// Academic-specific colors
+				academic: {
+					accent: 'hsl(var(--academic-accent))',
+					'accent-light': 'hsl(var(--academic-accent-light))',
+					muted: 'hsl(var(--academic-muted))'
+				},
+				shelf: {
+					want: 'hsl(var(--shelf-want))',
+					reading: 'hsl(var(--shelf-reading))',
+					read: 'hsl(var(--shelf-read))'
 				}
+			},
+			fontSize: {
+				'base-academic': ['15px', { lineHeight: '1.75' }],
+				'base-academic-md': ['16px', { lineHeight: '1.75' }],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

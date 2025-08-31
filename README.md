@@ -1,73 +1,108 @@
-# Welcome to your Lovable project
+# Paperlog - Academic Paper Tracker
 
-## Project info
+A Goodreads-style tracker for academic papers built with Next.js 14, TypeScript, TailwindCSS, and shadcn/ui.
 
-**URL**: https://lovable.dev/projects/08f24b48-4981-47b2-a268-9514d0169714
+## Features
 
-## How can I edit this code?
+- **DOI Resolution**: Paste DOI links or keywords to find papers
+- **Paper Library**: Organize papers into Want/Reading/Read shelves
+- **Rating & Reviews**: Rate papers 1-5 stars and write reviews
+- **Author & Journal Pages**: Browse papers by author or publication
+- **Responsive Design**: Beautiful academic-focused UI that works on all devices
+- **Accessibility**: Full keyboard navigation and screen reader support
 
-There are several ways of editing your application.
+## Pages & Routing
 
-**Use Lovable**
+- `/` - Home page with search and recent papers
+- `/paper/[id]-[slug]` - Canonical paper page with full details
+- `/paper/doi/[encoded]` - DOI resolver that redirects to canonical URLs
+- `/author/[id]` - Author profile with their papers
+- `/journal/[id]` - Journal page with recent publications
+- `/u/[handle]` - User profile and library
+- `/signin` - Authentication (UI stub)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/08f24b48-4981-47b2-a268-9514d0169714) and start prompting.
+## Tech Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+- **Next.js 14** with App Router
+- **TypeScript** for type safety
+- **TailwindCSS** for styling
+- **shadcn/ui** for UI components
+- **Lucide React** for icons
+- **Client-side data layer** with mocked async functions
 
-**Use your preferred IDE**
+## Design System
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+The app uses a comprehensive design system with:
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- **Academic color palette** (slate/indigo theme)
+- **Semantic color tokens** defined in CSS variables
+- **Typography scale** optimized for reading
+- **Consistent spacing** and border radius
+- **Dark mode support** throughout
+- **Accessibility-first** focus states and contrast
 
-Follow these steps:
+## Getting Started
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+1. **Clone the repository**
+```bash
+git clone <repository-url>
+cd paperlog
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+2. **Install dependencies**
+```bash
+npm install
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+3. **Start development server**
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+4. **Open in browser**
+Navigate to `http://localhost:3000`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Data Structure
 
-**Use GitHub Codespaces**
+The app uses JSON files for dummy data:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- `src/data/papers.json` - Paper metadata with DOIs
+- `src/data/authors.json` - Author information
+- `src/data/journals.json` - Journal details
+- `src/data/users.json` - User profiles
+- `src/data/userPapers.json` - User paper relationships
 
-## What technologies are used for this project?
+## Key Components
 
-This project is built with:
+- **SearchBar** - DOI and keyword search with validation
+- **PaperCard** - Responsive paper display with metadata
+- **RatingStars** - Interactive 5-star rating system
+- **ShelfSelector** - Three-state shelf management
+- **PaperActions** - Combined shelf/rating/review interface
+- **UserLibraryTabs** - Tabbed library organization
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Routing Features
 
-## How can I deploy this project?
+- **Canonical URLs** with slugs for SEO
+- **DOI resolution** with proper redirects
+- **Slug validation** and correction
+- **404 handling** for missing papers
 
-Simply open [Lovable](https://lovable.dev/projects/08f24b48-4981-47b2-a268-9514d0169714) and click on Share -> Publish.
+## Accessibility
 
-## Can I connect a custom domain to my Lovable project?
+- **WCAG 2.1 AA** compliance
+- **Keyboard navigation** throughout
+- **Screen reader** optimized
+- **Focus indicators** on all interactive elements
+- **Semantic HTML** structure
 
-Yes, you can!
+## Performance
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+- **Component-based** architecture
+- **Optimized images** with Next.js Image
+- **Code splitting** via dynamic imports
+- **Responsive loading** states
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## License
+
+MIT License - see LICENSE file for details
