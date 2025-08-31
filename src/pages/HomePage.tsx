@@ -98,6 +98,21 @@ export default function HomePage() {
 
   return (
     <div className="page-wrapper">
+      {/* Header */}
+      <header className="flex items-center justify-between py-6 px-4 md:px-8 border-b bg-background">
+        <div className="flex items-center gap-3">
+          <GraduationCap className="w-8 h-8 text-primary" />
+          <span className="text-2xl font-bold text-foreground">Peerly</span>
+        </div>
+        <nav className="flex gap-2">
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/profile">My Profile</Link>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/signin">Sign In</Link>
+          </Button>
+        </nav>
+      </header>
       <main className="page-container">
         {/* Hero Section */}
         <div className="text-center space-y-6 mb-12">
@@ -107,7 +122,7 @@ export default function HomePage() {
                 <GraduationCap className="w-8 h-8 text-primary" />
               </div>
               <h1 className="text-4xl md:text-5xl font-bold text-foreground">
-                Paperlog
+                Peerly: where peers rate what’s worth reading
               </h1>
             </div>
           </div>
@@ -121,14 +136,7 @@ export default function HomePage() {
             </p>
             
             {/* Quick Actions */}
-            <div className="flex flex-wrap justify-center gap-3 pt-4">
-              <Button variant="outline" size="sm" asChild>
-                <Link to="/profile">My Profile</Link>
-              </Button>
-              <Button variant="outline" size="sm" asChild>
-                <Link to="/signin">Sign In</Link>
-              </Button>
-            </div>
+            {/* Quick Actions moved to header */}
           </div>
 
           {/* Search Bar */}

@@ -17,7 +17,7 @@ export default function SignInPage() {
                 <div className="p-3 bg-primary/10 rounded-2xl">
                   <GraduationCap className="w-8 h-8 text-primary" />
                 </div>
-                <h1 className="text-3xl font-bold">Paperlog</h1>
+                <h1 className="text-3xl font-bold">Peerly</h1>
               </div>
             </div>
             <div className="space-y-2">

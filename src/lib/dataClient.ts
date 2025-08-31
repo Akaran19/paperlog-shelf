@@ -1,4 +1,38 @@
-// Paperlog - Mocked data client for academic paper tracking
+import userPapers from '../data/userPapers.json';
+import users from '../data/users.json';
+export async function getAggregatesForPaper(paperId: string): Promise<{ avgRating: number; count: number; histogram: Record<1|2|3|4|5, number>; }> {
+  const reviews = userPapers.filter(up => up.paperId === paperId && (up.rating || up.review));
+  const count = reviews.length;
+  const histogram: Record<1|2|3|4|5, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+  let total = 0;
+  reviews.forEach(up => {
+    if (up.rating) {
+      total += up.rating;
+      histogram[up.rating as 1|2|3|4|5]++;
+    }
+  });
+  const avgRating = count ? +(total / count).toFixed(2) : 0;
+  return { avgRating, count, histogram };
+}
+
+export async function getTopReviewsForPaper(paperId: string, limit = 3): Promise<Array<UserPaper & { user: User }>> {
+  const reviews = userPapers
+    .filter(up => up.paperId === paperId && (up.rating || up.review))
+    .map(up => {
+      const user = users.find(u => u.id === up.userId);
+      return {
+        ...up,
+        shelf: up.shelf as Shelf,
+        upvotes: up.upvotes ?? 0,
+        helpful: up.helpful ?? 0,
+        user,
+      };
+    })
+    .sort((a, b) => (b.upvotes ?? 0) - (a.upvotes ?? 0) || new Date(b.updatedAt ?? '').getTime() - new Date(a.updatedAt ?? '').getTime())
+    .slice(0, limit);
+  return reviews;
+}
+// Peerly - Mocked data client for academic paper tracking
 
 import { Paper, Author, Journal, User, UserPaper, Shelf, PaperAggregates } from '@/types';
 import { normalizeDOI } from './doi';

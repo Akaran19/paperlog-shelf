@@ -6,6 +6,7 @@ import { extractPaperId, shouldRedirectForSlug, paperUrl } from '@/lib/routing';
 import { formatDOIUrl } from '@/lib/doi';
 import { PaperActions } from '@/components/PaperActions';
 import { AggregateStats } from '@/components/AggregateStats';
+import ReviewsCard from '@/components/ReviewsCard';
 import { Calendar, Users, ExternalLink, BookOpen } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
@@ -189,15 +190,18 @@ export default function PaperPage() {
 
             {/* Abstract */}
             {paper.abstract && (
-              <div className="academic-card p-6">
-                <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                  <BookOpen className="w-5 h-5" />
-                  Abstract
-                </h2>
-                <p className="text-base-academic md:text-base-academic-md leading-relaxed text-muted-foreground">
-                  {paper.abstract}
-                </p>
-              </div>
+              <>
+                <div className="academic-card p-6">
+                  <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                    <BookOpen className="w-5 h-5" />
+                    Abstract
+                  </h2>
+                  <p className="text-base-academic md:text-base-academic-md leading-relaxed text-muted-foreground">
+                    {paper.abstract}
+                  </p>
+                </div>
+                <ReviewsCard paperId={paper.id} limit={3} />
+              </>
             )}
           </div>
 

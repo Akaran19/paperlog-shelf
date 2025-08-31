@@ -1,4 +1,4 @@
-// Paperlog routing utilities
+// Peerly routing utilities
 
 export const slugify = (s: string): string => 
   s.toLowerCase()

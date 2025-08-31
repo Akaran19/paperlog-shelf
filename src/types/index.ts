@@ -1,4 +1,4 @@
-// Paperlog - Academic paper tracking types
+// Peerly - Academic paper tracking types
 
 export type Shelf = 'WANT' | 'READING' | 'READ';
 
@@ -41,6 +41,8 @@ export interface UserPaper {
   review?: string;
   createdAt: string;
   updatedAt: string;
+  upvotes?: number;
+  helpful?: number;
 }
 
 export interface Activity {

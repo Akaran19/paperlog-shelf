@@ -1,4 +1,4 @@
-# Paperlog - Academic Paper Tracker
+# Peerly: where peers rate what’s worth reading
 
 A Goodreads-style tracker for academic papers built with Next.js 14, TypeScript, TailwindCSS, and shadcn/ui.
 
@@ -46,7 +46,7 @@ The app uses a comprehensive design system with:
 1. **Clone the repository**
 ```bash
 git clone <repository-url>
-cd paperlog
+cd peerly
 ```
 
 2. **Install dependencies**
