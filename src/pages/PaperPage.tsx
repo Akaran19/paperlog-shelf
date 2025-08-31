@@ -202,7 +202,7 @@ export default function PaperPage() {
           </div>
 
           {/* Sidebar Actions */}
-          <div className="space-y-6">
+          <div className="lg:sticky lg:top-6">
             <PaperActions 
               paperId={paper.id} 
               onUpdate={handlePaperUpdate}

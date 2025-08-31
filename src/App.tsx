@@ -9,6 +9,7 @@ import DOIResolverPage from "./pages/DOIResolverPage";
 import AuthorPage from "./pages/AuthorPage";
 import JournalPage from "./pages/JournalPage";
 import UserPage from "./pages/UserPage";
+import ProfilePage from "./pages/ProfilePage";
 import SignInPage from "./pages/SignInPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/author/:id" element={<AuthorPage />} />
           <Route path="/journal/:id" element={<JournalPage />} />
           <Route path="/u/:handle" element={<UserPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
           <Route path="/signin" element={<SignInPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

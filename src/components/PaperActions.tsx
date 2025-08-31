@@ -75,7 +75,7 @@ export function PaperActions({ paperId, onUpdate }: PaperActionsProps) {
 
   if (isInitialLoading) {
     return (
-      <Card className="p-6">
+      <Card className="p-6 w-full max-w-sm">
         <div className="animate-pulse space-y-4">
           <div className="h-10 bg-muted rounded"></div>
           <div className="h-6 bg-muted rounded w-1/3"></div>
@@ -86,8 +86,8 @@ export function PaperActions({ paperId, onUpdate }: PaperActionsProps) {
   }
 
   return (
-    <Card className="p-6 space-y-6">
-      <div className="space-y-4">
+    <Card className="p-6 w-full max-w-sm space-y-6">
+      <div className="space-y-6">
         <div>
           <h3 className="font-semibold mb-3">Add to Library</h3>
           <ShelfSelector
@@ -100,12 +100,18 @@ export function PaperActions({ paperId, onUpdate }: PaperActionsProps) {
           <>
             <div>
               <h3 className="font-semibold mb-3">Rate this Paper</h3>
-              <RatingStars
-                rating={userPaper.rating || 0}
-                onRatingChange={handleRatingChange}
-                size="lg"
-                showValue
-              />
+              <div className="flex items-center gap-3">
+                <RatingStars
+                  rating={userPaper.rating || 0}
+                  onRatingChange={handleRatingChange}
+                  size="lg"
+                />
+                {userPaper.rating && (
+                  <span className="text-sm font-medium text-muted-foreground">
+                    {userPaper.rating}/5
+                  </span>
+                )}
+              </div>
             </div>
 
             <div>

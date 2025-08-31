@@ -3,7 +3,9 @@ import { Paper, Author, Journal } from '@/types';
 import { dataClient } from '@/lib/dataClient';
 import { SearchBar } from '@/components/SearchBar';
 import { PaperCard } from '@/components/PaperCard';
-import { GraduationCap, BookOpen, TrendingUp } from 'lucide-react';
+import { GraduationCap, BookOpen, TrendingUp, Clock, Flame } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 export default function HomePage() {
   const [papers, setPapers] = useState<Paper[]>([]);
@@ -12,22 +14,44 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchResults, setSearchResults] = useState<Paper[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
+  const [viewMode, setViewMode] = useState<'recent' | 'trending'>('recent');
 
   useEffect(() => {
     loadInitialData();
-  }, []);
+  }, [viewMode]);
 
   const loadInitialData = async () => {
     try {
       // Load recent papers for homepage
       const recentPapers = await dataClient.keywordSearchPapers('');
-      const sortedPapers = recentPapers
-        .sort((a, b) => (b.year || 0) - (a.year || 0))
-        .slice(0, 9);
+      let sortedPapers;
+      
+      if (viewMode === 'trending') {
+        // For trending, we'll simulate by sorting by a combination of rating and recency
+        const papersWithAggregates = await Promise.all(
+          recentPapers.map(async (paper) => {
+            const aggregates = await dataClient.getAggregatesForPaper(paper.id);
+            return { ...paper, aggregates };
+          })
+        );
+        
+        sortedPapers = papersWithAggregates
+          .sort((a, b) => {
+            const scoreA = (a.aggregates.avgRating * a.aggregates.count) + (a.year || 0) * 0.1;
+            const scoreB = (b.aggregates.avgRating * b.aggregates.count) + (b.year || 0) * 0.1;
+            return scoreB - scoreA;
+          })
+          .slice(0, 9);
+      } else {
+        // Recent papers sorted by year
+        sortedPapers = recentPapers
+          .sort((a, b) => (b.year || 0) - (a.year || 0))
+          .slice(0, 9);
+      }
 
       // Load authors and journals for the papers
-      const authorIds = [...new Set(sortedPapers.flatMap(p => p.authorIds))];
-      const journalIds = [...new Set(sortedPapers.map(p => p.journalId).filter(Boolean))];
+      const authorIds = [...new Set(sortedPapers.flatMap(p => p.authorIds))] as string[];
+      const journalIds = [...new Set(sortedPapers.map(p => p.journalId).filter(Boolean))] as string[];
 
       const [authorsData, journalsData] = await Promise.all([
         Promise.all(authorIds.map(id => dataClient.getAuthor(id))),
@@ -95,6 +119,16 @@ export default function HomePage() {
             <p className="text-base-academic md:text-base-academic-md text-muted-foreground">
               Discover research, organize your reading list, and build your academic library
             </p>
+            
+            {/* Quick Actions */}
+            <div className="flex flex-wrap justify-center gap-3 pt-4">
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/profile">My Profile</Link>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/signin">Sign In</Link>
+              </Button>
+            </div>
           </div>
 
           {/* Search Bar */}
@@ -133,12 +167,39 @@ export default function HomePage() {
           )}
 
           {!hasSearched && (
-            <div className="text-center">
-              <h2 className="text-2xl md:text-3xl font-semibold mb-2">
-                Recent Papers
-              </h2>
+            <div className="text-center space-y-4">
+              <div className="flex items-center justify-center gap-4 mb-6">
+                <h2 className="text-2xl md:text-3xl font-semibold">
+                  {viewMode === 'recent' ? 'Recent Papers' : 'Trending Papers'}
+                </h2>
+                
+                <div className="flex items-center gap-2 bg-muted p-1 rounded-lg">
+                  <Button
+                    variant={viewMode === 'recent' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setViewMode('recent')}
+                    className="gap-2"
+                  >
+                    <Clock className="w-4 h-4" />
+                    Recent
+                  </Button>
+                  <Button
+                    variant={viewMode === 'trending' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setViewMode('trending')}
+                    className="gap-2"
+                  >
+                    <Flame className="w-4 h-4" />
+                    Trending
+                  </Button>
+                </div>
+              </div>
+              
               <p className="text-muted-foreground">
-                Discover the latest research across disciplines
+                {viewMode === 'recent' 
+                  ? 'Discover the latest research across disciplines'
+                  : 'Popular papers based on ratings and engagement'
+                }
               </p>
             </div>
           )}

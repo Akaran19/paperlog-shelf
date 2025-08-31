@@ -34,7 +34,7 @@ export function ShelfSelector({ currentShelf, onShelfChange, size = 'md' }: Shel
   const isSmall = size === 'sm';
 
   return (
-    <div className="flex gap-2">
+    <div className="flex flex-col sm:flex-row gap-2 w-full">
       {(Object.keys(shelfConfig) as Shelf[]).map((shelf) => {
         const config = shelfConfig[shelf];
         const Icon = config.icon;
@@ -47,12 +47,13 @@ export function ShelfSelector({ currentShelf, onShelfChange, size = 'md' }: Shel
             size={isSmall ? "sm" : "default"}
             onClick={() => onShelfChange(shelf)}
             className={cn(
-              "gap-2 transition-all duration-200",
-              isSelected && "ring-2 ring-primary/20"
+              "flex-1 gap-2 transition-all duration-200 min-w-0",
+              isSelected && "ring-2 ring-primary/20 shadow-sm",
+              isSmall ? "px-3 py-2 text-xs" : "px-4 py-3 text-sm"
             )}
           >
-            <Icon className={cn("w-4 h-4", isSmall && "w-3 h-3")} />
-            <span className={isSmall ? "text-xs" : "text-sm"}>
+            <Icon className={cn("flex-shrink-0", isSmall ? "w-3 h-3" : "w-4 h-4")} />
+            <span className="truncate">
               {isSmall ? config.shortLabel : config.label}
             </span>
           </Button>

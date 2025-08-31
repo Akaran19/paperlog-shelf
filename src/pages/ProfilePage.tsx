@@ -1,0 +1,203 @@
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { User, UserPaper } from '@/types';
+import { dataClient } from '@/lib/dataClient';
+import { UserLibraryTabs } from '@/components/UserLibraryTabs';
+import { User as UserIcon, Settings, Calendar, BookOpen, Star, MessageSquare, Edit3 } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+
+export default function ProfilePage() {
+  const [user, setUser] = useState<User | null>(null);
+  const [userPapers, setUserPapers] = useState<UserPaper[]>([]);
+  const [stats, setStats] = useState({
+    totalPapers: 0,
+    averageRating: 0,
+    totalReviews: 0,
+    readThisYear: 0
+  });
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    loadUserProfile();
+  }, []);
+
+  const loadUserProfile = async () => {
+    try {
+      // Get current user (in real app, this would come from auth context)
+      const currentUser = dataClient.getCurrentUser();
+      const papersData = await dataClient.listUserPapers(currentUser.id);
+      
+      // Calculate stats
+      const totalPapers = papersData.length;
+      const ratingsData = papersData.filter(p => p.rating !== null);
+      const averageRating = ratingsData.length > 0 
+        ? ratingsData.reduce((sum, p) => sum + (p.rating || 0), 0) / ratingsData.length
+        : 0;
+      const totalReviews = papersData.filter(p => p.review && p.review.trim()).length;
+      const currentYear = new Date().getFullYear();
+      const readThisYear = papersData.filter(p => 
+        p.shelf === 'READ' && new Date(p.updatedAt).getFullYear() === currentYear
+      ).length;
+
+      setUser(currentUser);
+      setUserPapers(papersData);
+      setStats({
+        totalPapers,
+        averageRating: Math.round(averageRating * 10) / 10,
+        totalReviews,
+        readThisYear
+      });
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="page-wrapper">
+        <main className="page-container">
+          <div className="animate-pulse space-y-8">
+            <div className="flex items-center gap-6">
+              <div className="w-24 h-24 bg-muted rounded-full"></div>
+              <div className="space-y-2">
+                <div className="h-8 bg-muted rounded w-48"></div>
+                <div className="h-6 bg-muted rounded w-32"></div>
+                <div className="h-10 bg-muted rounded w-40"></div>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="academic-card p-4 animate-pulse">
+                  <div className="h-12 bg-muted rounded"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="page-wrapper">
+        <main className="page-container">
+          <div className="text-center py-12">
+            <h1 className="text-4xl font-bold mb-4">Profile Not Found</h1>
+            <p className="text-muted-foreground mb-8">
+              Unable to load your profile.
+            </p>
+            <Link to="/" className="text-primary hover:underline">
+              ← Back to home
+            </Link>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  return (
+    <div className="page-wrapper">
+      <main className="page-container">
+        {/* Navigation */}
+        <div className="mb-6">
+          <Link 
+            to="/"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+          >
+            ← Back to home
+          </Link>
+        </div>
+
+        <div className="space-y-8">
+          {/* Profile Header */}
+          <div className="flex items-start gap-6">
+            <Avatar className="w-24 h-24">
+              <AvatarImage src={user.image} alt={user.name} />
+              <AvatarFallback className="text-xl bg-primary/10">
+                {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            
+            <div className="flex-1">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h1 className="text-3xl md:text-4xl font-bold mb-2">
+                    {user.name}
+                  </h1>
+                  <p className="text-lg text-muted-foreground mb-4">
+                    @{user.handle}
+                  </p>
+                </div>
+                
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Edit3 className="w-4 h-4" />
+                  Edit Profile
+                </Button>
+              </div>
+              
+              <div className="flex flex-wrap items-center gap-4 mb-4">
+                <Badge variant="secondary">
+                  <Calendar className="w-3 h-3 mr-1" />
+                  Member since 2023
+                </Badge>
+                <Link to="/settings" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  <Settings className="w-4 h-4 inline mr-1" />
+                  Settings
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Stats Cards */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Card className="p-4 text-center">
+              <div className="flex items-center justify-center mb-2">
+                <BookOpen className="w-5 h-5 text-primary" />
+              </div>
+              <div className="text-2xl font-bold">{stats.totalPapers}</div>
+              <div className="text-sm text-muted-foreground">Papers Tracked</div>
+            </Card>
+            
+            <Card className="p-4 text-center">
+              <div className="flex items-center justify-center mb-2">
+                <Star className="w-5 h-5 text-amber-500" />
+              </div>
+              <div className="text-2xl font-bold">
+                {stats.averageRating > 0 ? stats.averageRating : '—'}
+              </div>
+              <div className="text-sm text-muted-foreground">Avg Rating</div>
+            </Card>
+            
+            <Card className="p-4 text-center">
+              <div className="flex items-center justify-center mb-2">
+                <MessageSquare className="w-5 h-5 text-emerald-500" />
+              </div>
+              <div className="text-2xl font-bold">{stats.totalReviews}</div>
+              <div className="text-sm text-muted-foreground">Reviews Written</div>
+            </Card>
+            
+            <Card className="p-4 text-center">
+              <div className="flex items-center justify-center mb-2">
+                <Calendar className="w-5 h-5 text-indigo-500" />
+              </div>
+              <div className="text-2xl font-bold">{stats.readThisYear}</div>
+              <div className="text-sm text-muted-foreground">Read This Year</div>
+            </Card>
+          </div>
+
+          {/* Library */}
+          <div className="space-y-6">
+            <h2 className="text-2xl font-semibold">My Library</h2>
+            <UserLibraryTabs userId={user.id} />
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
