@@ -1,5 +1,5 @@
--- Verify and ensure production RLS policies are enabled
--- This migration ensures RLS is properly configured for production launch
+-- Fix RLS policies to work without Clerk JWT tokens
+-- This migration removes JWT dependencies and makes policies more permissive
 
 DO $$
 DECLARE
@@ -32,20 +32,9 @@ BEGIN
         ALTER TABLE public.user_papers ENABLE ROW LEVEL SECURITY;
         RAISE NOTICE 'Enabled RLS on user_papers table';
     END IF;
-
-    -- Verify policies exist
-    RAISE NOTICE 'Checking for existing policies...';
-
-    -- Count policies
-    RAISE NOTICE 'Profiles policies: %', (SELECT COUNT(*) FROM pg_policies WHERE tablename = 'profiles');
-    RAISE NOTICE 'Papers policies: %', (SELECT COUNT(*) FROM pg_policies WHERE tablename = 'papers');
-    RAISE NOTICE 'User_papers policies: %', (SELECT COUNT(*) FROM pg_policies WHERE tablename = 'user_papers');
 END $$;
 
--- Apply production RLS policies (from the enable_production_rls migration)
--- This ensures we have the correct policies even if they were dropped
-
--- Drop any existing policies first (safely)
+-- Drop existing policies that depend on JWT tokens
 DO $$
 DECLARE
     policy_record RECORD;
@@ -65,7 +54,6 @@ BEGIN
     END LOOP;
 END $$;
 
--- Apply production policies
 -- PROFILES POLICIES - Simplified for non-JWT authentication
 DROP POLICY IF EXISTS "profiles_public_read" ON public.profiles;
 CREATE POLICY "profiles_public_read" ON public.profiles
@@ -120,10 +108,10 @@ GRANT SELECT ON public.user_papers TO anon;
 -- Final verification
 DO $$
 BEGIN
-    RAISE NOTICE '🎉 Production RLS Setup Complete!';
+    RAISE NOTICE '🎉 RLS Policies Updated for Non-JWT Authentication!';
     RAISE NOTICE 'RLS Status:';
     RAISE NOTICE 'profiles: %', (SELECT relrowsecurity FROM pg_class WHERE relname = 'profiles');
     RAISE NOTICE 'papers: %', (SELECT relrowsecurity FROM pg_class WHERE relname = 'papers');
     RAISE NOTICE 'user_papers: %', (SELECT relrowsecurity FROM pg_class WHERE relname = 'user_papers');
-    RAISE NOTICE 'Policies created successfully for production launch!';
+    RAISE NOTICE 'Policies updated successfully for non-JWT authentication!';
 END $$;
